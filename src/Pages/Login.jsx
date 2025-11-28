@@ -33,6 +33,7 @@ export default function Login() {
             }
             else{
                 toast.error(res?.message ?? "Something went wrong.")
+                setWarnings(res?.errors)
             }
         })
     }

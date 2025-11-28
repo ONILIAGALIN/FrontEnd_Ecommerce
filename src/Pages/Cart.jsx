@@ -132,7 +132,7 @@ export default function Cart() {
       { !token ? (
         <Box sx={{display:'flex', flexDirection:'column', gap:2}}>
           <Typography>You need to login to see your cart.</Typography>
-          <Button variant="outlined" onClick={() => navigate('/login')}>Sign in</Button>
+          <Button variant="outlined" onClick={() => navigate('/login')}>Sign in Now</Button>
         </Box>
           ) : cart.length === 0 ? (
         <Typography sx={{color: "tomato"}}>Your cart is empty.</Typography>
@@ -143,29 +143,29 @@ export default function Cart() {
             label="Select All"
           />
           {cart.length > 0 && (
-  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-    {cart.map((item) => (
-      <Card key={item.id} sx={{ width: 300, display: 'flex', flexDirection: 'column' }}>
-        <CardContent
-          sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between",}}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Checkbox checked={selected.includes(item.id)} onChange={() => toggleSelected(item.id)} />
-            <Box>
-              <Typography variant="h6">{item.product?.name}</Typography>
-              <Typography variant="body2">₱{(item.product?.price ?? 0).toLocaleString()}</Typography>
-              <Box
-                sx={{ width: 50, height: 50, backgroundSize: 'cover', backgroundPosition: 'center',backgroundImage: `url('${item.product.image_url ?? `${IMAGE_URL}/${item.product.id}.${item.product.extension}`}')`,
-                }}/>
-              <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-                <IconButton onClick={() => decreaseQty(item)}>
-                  <Minus size={18} />
-                </IconButton>
-                <Typography sx={{ mx: 1 }}>{item.quantity}</Typography>
-                <IconButton onClick={() => increaseQty(item)}>
-                  <Plus size={18} />
-                </IconButton>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+          {cart.map((item) => (
+            <Card key={item.id} sx={{ width: 300, display: 'flex', flexDirection: 'column' }}>
+              <CardContent
+                sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between",}}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Checkbox checked={selected.includes(item.id)} onChange={() => toggleSelected(item.id)} />
+                  <Box>
+                    <Typography variant="h6">{item.product?.name}</Typography>
+                    <Typography variant="body2">₱{(item.product?.price ?? 0).toLocaleString()}</Typography>
+                    <Box
+                      sx={{ width: 50, height: 50, backgroundSize: 'cover', backgroundPosition: 'center',backgroundImage: `url('${item.product.image_url ?? `${IMAGE_URL}/${item.product.id}.${item.product.extension}`}')`,
+                      }}/>
+                    <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+                    <IconButton onClick={() => decreaseQty(item)}>
+                      <Minus size={18} />
+                    </IconButton>
+                    <Typography sx={{ mx: 1 }}>{item.quantity}</Typography>
+                    <IconButton onClick={() => increaseQty(item)}>
+                      <Plus size={18} />
+                    </IconButton>
+                </Box>
               </Box>
-            </Box>
           </Box>
           <Box sx={{ textAlign: "right", mt: 1 }}>
             <Typography variant="h6">

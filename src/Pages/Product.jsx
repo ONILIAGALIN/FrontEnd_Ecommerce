@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Select, MenuItem, FormControl, InputLabel, Rating, colors } from '@mui/material'
+import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Rating,Paper, InputBase,IconButton } from '@mui/material'
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
 import { DataGrid } from '@mui/x-data-grid'
 import { index, store, update, destroy } from '../api/product'
 import { useSelector } from 'react-redux'
@@ -21,7 +23,10 @@ function Product() {
   const updateFormRef = useRef(null)
   const [loading, setLoading] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(null);
-const [editRate, setEditRate] = useState(editDialog?.rate ?? 0);
+  const [editRate, setEditRate] = useState(editDialog?.rate ?? 0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState([]);
+
 
   const fetchProducts = () => {
   index().then(res => {
@@ -43,6 +48,24 @@ const [editRate, setEditRate] = useState(editDialog?.rate ?? 0);
   })
 }
 
+useEffect(() => {
+  const q = searchQuery.trim().toLowerCase();
+
+  if (!q) {
+    setFilteredProducts(products);
+    return;
+  }
+
+  const filtered = products.filter(p =>
+    (p.name ?? "").toLowerCase().includes(q) ||
+    (p.description ?? "").toLowerCase().includes(q) ||
+    (p.stock ?? "").toString().includes(q) ||
+    (p.price ?? "").toString().includes(q)
+  );
+
+  setFilteredProducts(filtered);
+}, [searchQuery, products]);
+
 
   const onCreate = (e) => {
     e.preventDefault()
@@ -60,11 +83,10 @@ const [editRate, setEditRate] = useState(editDialog?.rate ?? 0);
           return
         }
 
-
-        const potentialErrors = res?.errors ?? res?.error ?? res?.messages ?? null
-        if (potentialErrors) {
-          const msgs = []
-          if (Array.isArray(potentialErrors)) msgs.push(...potentialErrors.map(m => String(m)))
+  const potentialErrors = res?.errors ?? res?.error ?? res?.messages ?? null
+    if (potentialErrors) {
+        const msgs = []
+        if (Array.isArray(potentialErrors)) msgs.push(...potentialErrors.map(m => String(m)))
           else if (typeof potentialErrors === 'object') {
             for (const k of Object.keys(potentialErrors)) {
               const v = potentialErrors[k]
@@ -199,12 +221,18 @@ const [editRate, setEditRate] = useState(editDialog?.rate ?? 0);
         <Typography variant="h5" sx={{mb:4, color:"tomato"}}>
           Titan Tools Products
         </Typography>
+        <Paper component="form" sx={{ display: 'flex', alignItems: 'center', width: 550, height: 30, p: '2px 4px' }} onSubmit={e => e.preventDefault()}>
+              <InputBase sx={{ ml: 1, flex: 1, color:'black' }} placeholder="Search products..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+              <IconButton type="submit">
+                <SearchIcon />
+              </IconButton>
+            </Paper>
         <Box>
           <Button variant="contained" color="success" onClick={() => setCreateDialog(true)}>Create</Button>
         </Box>
       </Box>
       <DataGrid
-        columns={columns} rows={products} sx={{ mt: 2, height: "calc(100vh - 150px)" // adjust kung gusto mo mas baba
+        columns={columns} rows={filteredProducts} sx={{ mt: 2, height: "calc(100vh - 150px)" // adjust kung gusto mo mas baba
         }} />
       <Dialog open={createDialog}>
         <DialogTitle sx={{color:"tomato"}}>

@@ -58,6 +58,7 @@ function Home() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [cookies, setCookie, removeCookie] = useCookies()
   const user = useSelector(state => state.auth.user)
+  const [warnings, setWarnings] = useState({})
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -150,7 +151,7 @@ function Home() {
     <Box sx={{ mt: 5 }}>
 
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: -12, mb: 7 }}>
-        <Paper component="form" sx={{ display: 'flex', alignItems: 'center', width: 450, height: 35, p: '2px 4px', ml:22 }} onSubmit={e => e.preventDefault()}>
+        <Paper component="form" sx={{ display: 'flex', alignItems: 'center', width: 450, height: 35, p: '2px 4px', ml:20 }} onSubmit={e => e.preventDefault()}>
           <InputBase sx={{ ml: 1, flex: 1 }} placeholder="Search products..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)}/>
           <IconButton type="submit">
             <SearchIcon />
@@ -163,7 +164,7 @@ function Home() {
       </Typography>
       </Box>
 
-      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 4, flexWrap: 'wrap' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>
         {filteredProducts.map(product => (
           <Card product={product} key={product.id} onAdd={() => addToCart(product)} />
         ))}

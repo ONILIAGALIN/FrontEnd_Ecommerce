@@ -12,8 +12,8 @@ export default function AdminOrder() {
   
   const loadOrders = async () => {
     const token = cookies.AUTH_TOKEN;
-    const userId = cookies.USER_ID; // needed para sa user-specific orders
-    if (!token) return toast.error('No authentication token found');
+    const userId = cookies.USER_ID;
+    if (!token) return toast.error('No authenticated Users');
     
     try {
       const res = await getOrders(token);
@@ -47,10 +47,11 @@ export default function AdminOrder() {
 
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row', gap: 2, ml: 2, mt: 2}}>
+      <Typography variant="h6" color='tomato' sx={{ width: '100%', mb: 2 }}>Overall Orders</Typography>
       {orders.map(order => (
         <Card key={order.id} sx={{ width: 300, p: 2 }}>
           <Typography variant="h6">Order Summary</Typography>
-           <Typography>Order By: {order.user?.name}</Typography>
+           <Typography> Order By: {order.user?.profile ? `${order.user.profile.first_name} ${order.user.profile.last_name}` : order.user?.username}</Typography>
           <Typography>Status: {order.status}</Typography>
           <Typography>Total: ₱{order.total_amount.toLocaleString()}</Typography>
           <Divider sx={{ my: 1 }} />

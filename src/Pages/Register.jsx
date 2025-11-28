@@ -45,7 +45,7 @@ export default function Register() {
             }
             else{
                 toast.error(res?.message ?? "Something went wrong")
-                setWarnings(res?.error)
+                setWarnings(res?.errors)
             }
         }).finally(() => {
             setLoading(false)
