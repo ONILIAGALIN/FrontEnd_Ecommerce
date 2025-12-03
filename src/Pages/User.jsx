@@ -177,7 +177,7 @@ function Users() {
       setLoading(true)
       const payload = {
         first_name: editDialog.first_name,
-        middle_name: editDialog.middle_name?.trim() ?? "",
+        middle_name: editDialog.middle_name ?? "",
         last_name: editDialog.last_name,
         address: editDialog.address,
         phone_number: editDialog.phone_number,
