@@ -22,6 +22,17 @@ function Users() {
   const [cookies] = useCookies()
   const [searchQuery, setSearchQuery] = useState('')
   const navigate = useNavigate()
+  const [createForm, setCreateForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+    first_name: '',
+    middle_name: '',
+    last_name: '',
+    address: '',
+    phone_number: ''
+  })
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 80 },
@@ -39,9 +50,9 @@ function Users() {
       sortable: false,
       filterable: false,
       renderCell: params => (
-        <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-          <Button onClick={() => setEditDialog({ ...params.row })} variant="contained" color="warning">Edit</Button>
-          <Button onClick={() => setDeleteDialog(params.row.id)} variant="contained" color="error">Delete</Button>
+        <Box sx={{ display: 'flex',  flexDirection: { xs: 'column', sm: 'row' }, gap: { xs: 0.5, sm: 1 },  justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+          <Button onClick={() => setEditDialog({ ...params.row })} variant="contained" color="warning" sx={{ width: { xs: '100%', sm: 'auto' } }}>Edit</Button>
+          <Button onClick={() => setDeleteDialog(params.row.id)} variant="contained" color="error" sx={{ width: { xs: '100%', sm: 'auto' } }}>Delete</Button>
         </Box>
       ),
       minWidth: 200,
@@ -51,7 +62,6 @@ function Users() {
 
   const refreshData = () => {
     if (!user) return
-
     if (user.role !== 'admin') {
       toast.error("You are not authorized to view this page")
       navigate("/")
@@ -101,36 +111,48 @@ function Users() {
     )
   }, [searchQuery, rows])
 
-  const onCreate = (e) => {
-    e.preventDefault()
-    if (!loading) {
-      setLoading(true)
-      const body = {
-        name: $("#name").val(),
-        password: $("#password").val(),
-        password_confirmation: $("#password_confirmation").val(),
-        first_name: $("#first_name").val(),
-        middle_name: $("#middle_name").val(),
-        last_name: $("#last_name").val(),
-        email: $("#email").val(),
-        address: $("#address").val(),
-        phone_number: $("#phone_number").val(),
-      }
-      store(body, cookies.AUTH_TOKEN).then(res => {
+ const onCreate = (e) => {
+  e.preventDefault()
+  if (!loading) {
+    setLoading(true)
+
+    const payload = {
+      name: createForm.name || '',
+      email: createForm.email || '',
+      password: createForm.password || '',
+      password_confirmation: createForm.password_confirmation || '',
+      first_name: createForm.first_name || '',
+      last_name: createForm.last_name || '',
+      address: createForm.address || '',
+      phone_number: createForm.phone_number || '',
+    }
+
+    store(payload, cookies.AUTH_TOKEN)
+      .then(res => {
         if (res?.ok) {
           toast.success(res?.message ?? "Account has been Created")
           setCreateDialog(false)
           setWarnings({})
+          setCreateForm({
+            name: '',
+            email: '',
+            password: '',
+            password_confirmation: '',
+            first_name: '',
+            middle_name: '',
+            last_name: '',
+            address: '',
+            phone_number: ''
+          })
           refreshData()
         } else {
           toast.error(res?.message ?? "Something went wrong")
           setWarnings(res?.errors ?? {})
         }
-      }).finally(() => {
-        setLoading(false)
       })
-    }
+      .finally(() => setLoading(false))
   }
+}
 
   const onDelete = () => {
     if (!loading) {
@@ -155,7 +177,7 @@ function Users() {
       setLoading(true)
       const payload = {
         first_name: editDialog.first_name,
-        middle_name: editDialog.middle_name,
+        middle_name: editDialog.middle_name?.trim() || null,
         last_name: editDialog.last_name,
         address: editDialog.address,
         phone_number: editDialog.phone_number,
@@ -179,61 +201,81 @@ function Users() {
     <Box>
       {user ? (
         <Box sx={{ mt: 2 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 2 }}>
-            <Typography variant="h5" sx={{ mb: 4, color: "tomato" }}>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' },  alignItems: { xs: 'stretch', sm: 'center' },  justifyContent: 'space-between', gap:2, px: 2 }}>
+            <Typography variant="h5" sx={{ mb: { xs: 2, sm: 0 }, color: "tomato" }}>
               Titan User's List.
             </Typography>
-            <Paper component="form" sx={{ display: 'flex', alignItems: 'center', width: 550, height: 30, p: '2px 4px' }} onSubmit={e => e.preventDefault()}>
+            <Paper component="form" sx={{ display: 'flex', alignItems: 'center', width: { xs: '100%', sm: '60%', md: '40%' },  p: '2px 4px'  }} onSubmit={e => e.preventDefault()}>
               <InputBase sx={{ ml: 1, flex: 1, color:'black' }} placeholder="Search users..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
               <IconButton type="submit">
                 <SearchIcon />
               </IconButton>
             </Paper>
             <Box>
-              <Button variant="contained" color="success" onClick={() => setCreateDialog(true)}>Create</Button>
+              <Button variant="contained" color="success" sx={{ width: { xs: '100%', sm: 'auto' } }}  onClick={() => setCreateDialog(true)}>Create</Button>
             </Box>
           </Box>
 
           <DataGrid
-            sx={{ mt: 1, color: 'black', height: 'calc(100vh - 150px)'}} columns={columns} rows={filteredRows} pageSize={10} rowsPerPageOptions={[10, 25, 50]}disableSelectionOnClick getRowId={(row) => row.id}/>
+            sx={{ mt: 1, color: 'black',  flexGrow: 1, minHeight: 400 }} columns={columns} rows={filteredRows} pageSize={10} rowsPerPageOptions={[10, 25, 50]}disableSelectionOnClick getRowId={(row) => row.id}/>
           {/* Create Dialog */}
-          <Dialog open={createDialog}>
+          <Dialog open={createDialog} fullWidth maxWidth="sm">
             <DialogTitle sx={{ color: "tomato" }}>Create User</DialogTitle>
             <DialogContent>
               <Box component="form" onSubmit={onCreate} sx={{ width: 300, mx: 'auto' }}>
                 <Box sx={{ mt: 1 }}>
-                  <TextField required id="name" fullWidth size="small" label="User name" />
-                  {warnings?.name ? <Typography sx={{ fontSize: 12 }} component="small" color="error">{warnings.name}</Typography> : null}
+                  <TextField required id="name" fullWidth size="small" label="User name" value={createForm.name} onChange={e => setCreateForm({ ...createForm, name: e.target.value })}/>
+                  {warnings?.name ? (
+                    <Typography sx={{ fontSize: 12 }} component="small" color="error"> {warnings.name} </Typography>
+                  ) : null}
                 </Box>
                 <Box sx={{ mt: 1 }}>
-                  <TextField required id="email" fullWidth size="small" label="Email" />
-                  {warnings?.email ? <Typography sx={{ fontSize: 12 }} component="small" color="error">{warnings.email}</Typography> : null}
+                  <TextField required id="email" fullWidth size="small" label="Email" value={createForm.email} onChange={e => setCreateForm({ ...createForm, email: e.target.value })}/>
+                  {warnings?.email ? (
+                    <Typography sx={{ fontSize: 12 }} component="small" color="error"> {warnings.email} </Typography>
+                  ) : null}
                 </Box>
                 <Box sx={{ mt: 1 }}>
-                  <TextField required id="password" fullWidth size="small" label="Password" type='password' />
-                  {warnings?.password ? <Typography sx={{ fontSize: 12 }} component="small" color="error">{warnings.password}</Typography> : null}
+                  <TextField required id="password" fullWidth size="small" label="Password" type='password' value={createForm.password} onChange={e => setCreateForm({ ...createForm, password: e.target.value })}/>
+                  {warnings?.password ? (
+                    <Typography sx={{ fontSize: 12 }} component="small" color="error"> {warnings.password} </Typography>
+                  ) : null}
                 </Box>
                 <Box sx={{ mt: 1 }}>
-                  <TextField required id="password_confirmation" fullWidth size="small" label="Repeat password" type='password' />
+                  <TextField required id="password_confirmation" fullWidth size="small" type='password' label="Password Confirmation" value={createForm.password_confirmation} onChange={e => setCreateForm({ ...createForm, password_confirmation: e.target.value })}/>
+                  {warnings?.password_confirmation ? (
+                    <Typography sx={{ fontSize: 12 }} component="small" color="error"> {warnings.password_confirmation} </Typography>
+                  ) : null}
                 </Box>
                 <Box sx={{ mt: 1 }}>
-                  <TextField required id="first_name" fullWidth size="small" label="First name" />
-                  {warnings?.first_name ? <Typography sx={{ fontSize: 12 }} component="small" color="error">{warnings.first_name}</Typography> : null}
+                  <TextField required id="first_name" fullWidth size="small" label="first Name" value={createForm.first_name} onChange={e => setCreateForm({ ...createForm, first_name: e.target.value })}/>
+                  {warnings?.first_name ? (
+                    <Typography sx={{ fontSize: 12 }} component="small" color="error"> {warnings.first_name} </Typography>
+                  ) : null}
                 </Box>
                 <Box sx={{ mt: 1 }}>
-                  <TextField id="middle_name" fullWidth size="small" label="Middle Name" />
+                  <TextField id="middle_name" fullWidth size="small" label="Middle Name" value={createForm.middle_name} onChange={e => setCreateForm({ ...createForm, middle_name: e.target.value })}/>
+                  {warnings?.middle_name ? (
+                    <Typography sx={{ fontSize: 12 }} component="small" color="error"> {warnings.middle_name} </Typography>
+                  ) : null}
                 </Box>
                 <Box sx={{ mt: 1 }}>
-                  <TextField required id="last_name" fullWidth size="small" label="Last Name" />
-                  {warnings?.last_name ? <Typography sx={{ fontSize: 12 }} component="small" color="error">{warnings.last_name}</Typography> : null}
+                  <TextField required id="last_name" fullWidth size="small" label="Last Name" value={createForm.last_name} onChange={e => setCreateForm({ ...createForm, last_name: e.target.value })}/>
+                  {warnings?.last_name ? (
+                    <Typography sx={{ fontSize: 12 }} component="small" color="error"> {warnings.last_name} </Typography>
+                  ) : null}
                 </Box>
                 <Box sx={{ mt: 1 }}>
-                  <TextField required id="address" fullWidth size="small" label="Address" />
-                  {warnings?.address ? <Typography sx={{ fontSize: 12 }} component="small" color="error">{warnings.address}</Typography> : null}
+                  <TextField required id="address" fullWidth size="small" label="Address" value={createForm.address} onChange={e => setCreateForm({ ...createForm, address: e.target.value })}/>
+                  {warnings?.address ? (
+                    <Typography sx={{ fontSize: 12 }} component="small" color="error"> {warnings.address} </Typography>
+                  ) : null}
                 </Box>
                 <Box sx={{ mt: 1 }}>
-                  <TextField required id="phone_number" fullWidth size="small" label="Phone Number" />
-                  {warnings?.phone_number ? <Typography sx={{ fontSize: 12 }} component="small" color="error">{warnings.phone_number}</Typography> : null}
+                  <TextField required id="phone_number" fullWidth size="small" label="Phone Number" value={createForm.phone_number} onChange={e => setCreateForm({ ...createForm, phone_number: e.target.value })}/>
+                  {warnings?.phone_number ? (
+                    <Typography sx={{ fontSize: 12 }} component="small" color="error"> {warnings.phone_number} </Typography>
+                  ) : null}
                 </Box>
                 <Box sx={{ mt: 2, textAlign: "center" }}>
                   <Button id="submit_btn" disabled={loading} type="submit" sx={{ display: 'none' }}></Button>
@@ -241,11 +283,10 @@ function Users() {
               </Box>
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => setCreateDialog(false)} color='info'>Close</Button>
+              <Button onClick={() => setCreateDialog(false)} color="info">Close</Button>
               <Button onClick={() => { $("#submit_btn").trigger("click") }}>Create</Button>
             </DialogActions>
           </Dialog>
-
           {/* Delete Dialog */}
           <Dialog open={!!deleteDialog}>
             <DialogTitle>Are you sure?</DialogTitle>

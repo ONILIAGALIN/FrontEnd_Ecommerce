@@ -191,7 +191,7 @@ export default function Cart() {
       </Typography>
 
       <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 2 }}>
-        <Button variant="outlined" color="error" onClick = {() => navigate('/')}> Cancel </Button>
+        <Button variant="outlined" color="error" onClick = {() => navigate('/')}> Cart More </Button>
         <Button variant="contained" disabled={selected.length === 0 || !token} onClick={onCheckout}> Checkout {selected.length > 0 ? `(${selected.length}) ₱${selectedTotal.toLocaleString()}` : ''}</Button>
 
       </Box>

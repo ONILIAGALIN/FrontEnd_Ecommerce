@@ -40,12 +40,16 @@ export default function Login() {
 
     return (
         <Box
-            className="Login" sx={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundImage:  'url("https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1400&q=80")', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
-        <Box sx={{minHeight:250, width: 400, boxShadow: 'black 0px 0px  2px', borderRadius:2, backgroundColor:'rgba(255,255,255,.8)'}}>
-            <Typography variant="h6" sx={{textAlign:'center', mt:2, color:'tomato'}}>
-                Sign In you Account
-            </Typography>
-            <Box component="form" onSubmit={onSubmit} sx={{width:300, mx:'auto'}}>
+            className="Login" sx={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundImage:  'url("https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1400&q=80")', backgroundSize: 'cover', backgroundPosition: 'center'}}>
+        <Box
+        sx={{width: { xs: "100%", sm: 380, md: 420 }, minHeight: 250, boxShadow: "0px 0px 5px rgba(0,0,0,.4)", borderRadius: 2, backgroundColor: "rgba(255,255,255,0.85)",p: { xs: 3, sm: 4 },}}>
+        <Typography
+          variant="h6"
+          sx={{ textAlign: "center", color: "tomato", mb: 2 }}>
+          Sign In to Your Account
+        </Typography>
+
+            <Box component="form" onSubmit={onSubmit} sx={{width:"100%",maxWidth:300, mx:'auto'}}>
                 <Box sx={{mt:1}}>
                     <TextField onChange={(e) => setName(e.target.value)} value={name} fullWidth size="small" label="Username" className='username' required InputProps={{ startAdornment: ( <InputAdornment position="start"> <AccountCircle sx={{ fontSize: 20, color: 'tomato' }} /> </InputAdornment>),}}/>
                 </Box>
@@ -55,12 +59,12 @@ export default function Login() {
                 <Box>
                 </Box>
                 <Box sx={{mt:2, textAlign:"center",}}>
-                    <Button type="submit" variant="contained" sx={{backgroundColor: 'tomato', color: 'white'}} startIcon={<LoginIcon />}>Login</Button>
+                    <Button type="submit" variant="contained" sx={{backgroundColor: 'tomato', color: 'white',py:1, fontSize: "15px"}} startIcon={<LoginIcon />}>Login</Button>
                 </Box>
             </Box>
             <Box sx={{textAlign:'center', mt:2}}>
-                <Link to="/register">
-                    <Typography sx={{color: 'tomato'}} className="box"> 
+                <Link to="/register" style={{textDecoration: "none"}}>
+                    <Typography sx={{color: 'tomato', fontSize:"14px"}} className="box"> 
                         Don't have an account yet?
                     </Typography>
                 </Link>
