@@ -60,6 +60,7 @@ function Home() {
   const user = useSelector(state => state.auth.user)
   const [warnings, setWarnings] = useState({})
   const navigate = useNavigate()
+  const [visibleCount, setVisibleCount] = useState(10);
 
   useEffect(() => {
     productsIndex()
@@ -93,6 +94,13 @@ function Home() {
 }, [products, searchQuery]);
 
 
+{filteredProducts.slice(0, visibleCount).map(product => (
+  <Card product={product} key={product.id} onAdd={() => addToCart(product)} />
+))}
+
+{visibleCount < filteredProducts.length && (
+  <Button onClick={() => setVisibleCount(prev => prev + 10)}>Load More</Button>
+)}
 
   const addToCart = (product) => {
     if(!user && !cookies?.AUTH_TOKEN){
@@ -163,12 +171,24 @@ function Home() {
         Welcome to Titan Tools – Strength you can depend on. We're glad to have you here.
       </Typography>
       </Box>
-
       <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>
-        {filteredProducts.map(product => (
-          <Card product={product} key={product.id} onAdd={() => addToCart(product)} />
-        ))}
-    </Box>
+  {(user ? filteredProducts : filteredProducts.slice(0, 10)).map(product => (
+    <Card product={product} key={product.id} onAdd={() => addToCart(product)} />
+  ))}
+</Box>
+
+{!user && filteredProducts.length > 10 && (
+  <Box sx={{ textAlign: 'center', mt: 2, pb: 2 }}>
+    <Button 
+      variant="outlined"
+      onClick={() => navigate('/login')}
+      sx={{ color: 'tomato', borderColor: 'tomato' }}
+    >
+      Please Sign In to view more Items
+    </Button>
+  </Box>
+)}
+
 </Box>
 
   )

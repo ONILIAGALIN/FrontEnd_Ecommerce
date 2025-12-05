@@ -1,13 +1,11 @@
 import { url as API_URL } from './configuration';
-//export const url = "http://localhost:8000/api"
-//export const image = 'http://localhost:8000/storage/uploads/products/'
 
-export const url = "https://leoniel.site/api";
-export const image = 'https://leoniel.site/storage/uploads/products/';
+//export const url = "https://leoniel.site/api";
+//export const image = 'https://leoniel.site/storage/uploads/products/';
 
 export const checkout = async (token, body) => {
   try {
-    const response = await fetch(`${url}/orders`, {
+    const response = await fetch(`${API_URL}/orders`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',

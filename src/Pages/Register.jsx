@@ -27,8 +27,8 @@ export default function Register() {
             first_name: $("#first_name").val(),
             middle_name: $("#middle_name").val(),
             last_name: $("#last_name").val(),
-            address: $("#address").val(),
-            phone_number: $("#phone_number").val(),
+            //address: $("#address").val(),
+           // phone_number: $("#phone_number").val(),
         }
         if(!body.middle_name){
             delete body.middle_name
@@ -101,29 +101,13 @@ export default function Register() {
                         }
                     </Box>
                     <Box sx={{mt:1}}>
-                        <TextField id="middle name" fullWidth size="small" label="Middle name"/>
+                        <TextField id="middle name" fullWidth size="small" label="Middle name (Optional)"/>
                     </Box>
                     <Box sx={{mt:1}}>
                         <TextField required id="last_name" fullWidth size="small" label="Last name"/>
                         {
                             warnings?.last_name ? (
                                 <Typography sx={{fontSize: 12}} component="small" color="error">{warnings.last_name}</Typography>
-                            ) : null
-                        }
-                    </Box>
-                    <Box sx={{mt:1}}>
-                        <TextField required id="address" fullWidth size="small" label="Address" type='text' />
-                        {
-                            warnings?.address ? (
-                                <Typography sx={{fontSize: 12}} component="small" color="error">{warnings.address}</Typography>
-                            ) : null
-                        }
-                    </Box>
-                    <Box sx={{mt:1}}>
-                        <TextField required id="phone_number" fullWidth size="small" type="number" label="Phone Number"/>
-                        {
-                            warnings?.phone_number ? (
-                                <Typography sx={{fontSize: 12}} component="small" color="error">{warnings.phone_number}</Typography>
                             ) : null
                         }
                     </Box>

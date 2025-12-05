@@ -20,7 +20,7 @@ export default function Login() {
     const onSubmit = (e) => {
         e.preventDefault()
         loginAPI({
-            name,
+            login:name,
             password
         }).then(res => {
             console.log(res)
@@ -51,10 +51,10 @@ export default function Login() {
 
             <Box component="form" onSubmit={onSubmit} sx={{width:"100%",maxWidth:300, mx:'auto'}}>
                 <Box sx={{mt:1}}>
-                    <TextField onChange={(e) => setName(e.target.value)} value={name} fullWidth size="small" label="Username" className='username' required InputProps={{ startAdornment: ( <InputAdornment position="start"> <AccountCircle sx={{ fontSize: 20, color: 'tomato' }} /> </InputAdornment>),}}/>
+                    <TextField onChange={(e) => setName(e.target.value)} value={name} fullWidth size="small" label="Username" placeholder='Please Enter  your or Username Email ' required InputProps={{ startAdornment: ( <InputAdornment position="start"> <AccountCircle sx={{ fontSize: 20, color: 'tomato' }} /> </InputAdornment>),}} sx={{"& input::placeholder": {fontSize: "0.78rem",color: "#888", },}}/>
                 </Box>
                 <Box sx={{mt:1}}>
-                    <TextField onChange={(e) => setPassword(e.target.value)} value={password} fullWidth size="small" label="Password" className='username' type='password' required InputProps={{ startAdornment: ( <InputAdornment position="start"> <Lock sx={{ fontSize: 20, color: 'tomato' }} /> </InputAdornment>),}}/>
+                    <TextField onChange={(e) => setPassword(e.target.value)} value={password} placeholder='Please Enter you Password' fullWidth size="small" label="Password" className='username' type='password' required InputProps={{ startAdornment: ( <InputAdornment position="start"> <Lock sx={{ fontSize: 20, color: 'tomato' }} /> </InputAdornment>),}} sx={{"& input::placeholder": {fontSize: "0.78rem",color: "#888", },}}/>
                 </Box>
                 <Box>
                 </Box>

@@ -1,7 +1,9 @@
 //export const url = "http://localhost:8000/api"
-import { url } from "./configuration";
-// Images are stored in `public/storage/uploads/products/` on the Laravel backend
 export const image = 'http://localhost:8000/storage/uploads/products/'
+
+import { url } from "./configuration";
+//export const url = "https://leoniel.site/api";
+//export const image = 'https://leoniel.site/storage/uploads/products/';
 
 export const store = async (body, token) => {
     try {

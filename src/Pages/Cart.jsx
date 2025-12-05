@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {Box,Card,CardContent, Typography,IconButton, Button,Checkbox, FormControlLabel,Divider,} from "@mui/material";
+import {Box,Card,CardContent, Typography,IconButton, Button,Checkbox, FormControlLabel,Divider,Dialog, DialogTitle, DialogContent, DialogActions, TextField} from "@mui/material";
 import { useNavigate } from 'react-router-dom'
 import { Plus, Minus, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
@@ -14,6 +14,9 @@ export default function Cart() {
   const token = cookies.AUTH_TOKEN
   const navigate = useNavigate()
 
+  const [openCheckout, setOpenCheckout] = useState(false);
+  const [userInfo, setUserInfo] = useState({ address: "", phone_number: "" });
+  
   const loadCart = async () => {
     try {
       console.debug('Cart.loadCart: tokenMask', token ? `${String(token).slice(0,8)}...` : null)
@@ -96,32 +99,54 @@ export default function Cart() {
     return sum + total
   }, 0)
 
-  const onCheckout = async () => {
-    if(!token) return toast.error('You must be logged in to checkout')
-    if(selected.length === 0) return toast.error('Please select at least one item to checkout')
+  const onCheckout = () => {
+    if (!token) return toast.error("You must be logged in to checkout");
+    if (selected.length === 0)
+      return toast.error("Please select at least one item to checkout");
 
-    const items = cart.filter(i => selected.includes(i.id)).map(i => ({ cart_id: i.id, product_id: i.product?.id, quantity: i.quantity }))
-    try {
-      console.debug('Cart.checkout: sending', { tokenMask: token ? `${String(token).slice(0,8)}...` : null, items })
-      const res = await orderCheckout(token, { items })
-      if(res?.ok) {
-        toast.success(res?.message ?? 'Checkout successful')
-        setSelected([])
-        loadCart()
-        navigate('/orders')
-      } else {
-        toast.error(res?.message ?? 'Checkout failed')
-      }
-    } catch (err) {
-      console.error('Cart.checkout failed', err)
-      toast.error(err?.message ?? 'Network error')
+    setOpenCheckout(true); // open modal for user info
+  };
+
+  const handleConfirmCheckout = async () => {
+    if (!userInfo.address || !userInfo.phone_number) {
+      return toast.error("Please fill in address and phone number");
     }
+
+  const items = cart
+    .filter(i => selected.includes(i.id))
+    .map(i => ({
+      cart_id: i.id,
+      product_id: i.product?.id,
+      quantity: i.quantity
+    }));
+
+  const payload = {
+      items,
+      address: userInfo.address,
+      phone_number: userInfo.phone_number,
+    };
+
+  try {
+    const res = await orderCheckout(token, payload);
+    
+    if (res?.ok) {
+      toast.success(res?.message ?? 'Checkout successful');
+      setSelected([]);
+      loadCart();
+      navigate('/orders');
+    } else {
+      toast.error(res?.message ?? 'Checkout failed');
+    }
+  } catch (err) {
+    toast.error(err?.message ?? 'Network error');
   }
+};
+
 
   const totalAmount = cart.reduce((sum, item) => {
     const total = typeof item.total_price === 'number' ? item.total_price : (item.product?.price ?? 0) * (item.quantity ?? 0)
     return sum + total
-  }, 0)
+  }, 0);
 
   return (
     <Box sx={{ p: 3 }}>
@@ -195,7 +220,18 @@ export default function Cart() {
         <Button variant="contained" disabled={selected.length === 0 || !token} onClick={onCheckout}> Checkout {selected.length > 0 ? `(${selected.length}) ₱${selectedTotal.toLocaleString()}` : ''}</Button>
 
       </Box>
-
+      <Dialog open={openCheckout} onClose={() => setOpenCheckout(false)}>
+        <DialogTitle>Please Filled up first.</DialogTitle>
+        <DialogContent
+          sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1,width: "300px",height:"100" }}>
+          <TextField label="Address" value={userInfo.address} onChange={(e) => setUserInfo({ ...userInfo, address: e.target.value })} fullWidth size="small" required/>
+          <TextField label="Phone Number" value={userInfo.phone_number} onChange={(e) => setUserInfo({ ...userInfo, phone_number: e.target.value }) } fullWidth size="small" required/>
+        </DialogContent>
+        <DialogActions>
+          <Button sx={{pr:15}} onClick={() => setOpenCheckout(false)}>Cancel</Button>
+          <Button sx={{pr:5}} onClick={handleConfirmCheckout}>Confirm</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

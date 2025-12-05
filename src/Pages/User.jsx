@@ -41,16 +41,16 @@ function Users() {
     { field: 'first_name', headerName: 'First name', flex: 1 },
     { field: 'middle_name', headerName: 'Middle name', flex: 1 },
     { field: 'last_name', headerName: 'Last name', flex: 1 },
-    { field: 'address', headerName: 'Address', flex: 1 },
-    { field: 'phone_number', headerName: 'Phone Number', flex: 1 },
-    { field: 'role', headerName: 'Role', flex: 1 },
+    //{ field: 'address', headerName: 'Address', flex: 1 },
+    //{ field: 'phone_number', headerName: 'Phone Number', flex: 1 },
+    //{ field: 'role', headerName: 'Role', flex: 1 },
     {
       field: 'actions',
       headerName: '',
       sortable: false,
       filterable: false,
       renderCell: params => (
-        <Box sx={{ display: 'flex',  flexDirection: { xs: 'column', sm: 'row' }, gap: { xs: 0.5, sm: 1 },  justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+        <Box sx={{ display: 'flex',  flexDirection: { xs: 'column', sm: 'row' }, gap: { xs: 0.5, sm: 1 },  justifyContent: 'center', alignItems: 'center', width: '100%',pt:1 }}>
           <Button onClick={() => setEditDialog({ ...params.row })} variant="contained" color="warning" sx={{ width: { xs: '100%', sm: 'auto' } }}>Edit</Button>
           <Button onClick={() => setDeleteDialog(params.row.id)} variant="contained" color="error" sx={{ width: { xs: '100%', sm: 'auto' } }}>Delete</Button>
         </Box>
